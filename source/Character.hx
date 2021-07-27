@@ -282,7 +282,11 @@ class Character extends FlxSprite
 				animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
 				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
 				animation.addByPrefix('hey', 'BF HEY', 24, false);
-
+				animation.addByPrefix('idle-alt', 'BF idle dance', 24, false);
+				animation.addByPrefix('singUP-alt', 'BF NOTE UP0', 24, false);
+				animation.addByPrefix('singLEFT-alt', 'BF NOTE LEFT0', 24, false);
+				animation.addByPrefix('singRIGHT-alt', 'BF NOTE RIGHT0', 24, false);
+				animation.addByPrefix('singDOWN-alt', 'BF NOTE DOWN0', 24, false);
 				animation.addByPrefix('firstDeath', "BF dies", 24, false);
 				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
 				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
@@ -294,6 +298,11 @@ class Character extends FlxSprite
 				addOffset("singRIGHT", -38, -7);
 				addOffset("singLEFT", 12, -6);
 				addOffset("singDOWN", -10, -50);
+				addOffset('idle-alt', -5);
+				addOffset("singUP-alt", -29, 27);
+				addOffset("singRIGHT-alt", -38, -7);
+				addOffset("singLEFT-alt", 12, -6);
+				addOffset("singDOWN-alt", -10, -50);
 				addOffset("singUPmiss", -29, 27);
 				addOffset("singRIGHTmiss", -30, 21);
 				addOffset("singLEFTmiss", 12, 24);
@@ -303,7 +312,7 @@ class Character extends FlxSprite
 				addOffset('deathLoop', 37, 5);
 				addOffset('deathConfirm', 37, 69);
 				addOffset('scared', -4);
-
+				
 				playAnim('idle');
 
 				flipX = true;
@@ -497,6 +506,26 @@ class Character extends FlxSprite
 				addOffset("singLEFT-alt", -30, 15);
 				addOffset("singDOWN-alt", -30, -27);
 
+				playAnim('idle');
+				
+			case 'lark':
+				frames = Paths.getSparrowAtlas('characters/lark_assets');
+				animation.addByPrefix('idle', 'Lark Idle');
+				animation.addByPrefix('singUP', 'Lark Up');
+				animation.addByPrefix('singDOWN', 'Lark Down');
+				animation.addByPrefix('singLEFT', 'Lark Left');
+				animation.addByPrefix('singRIGHT', 'Lark Right');
+				animation.addByPrefix('hey', 'Lark Middle');
+				animation.addByPrefix('intro', 'Lark Get_Mic');
+				
+				addOffset('idle', 0, 153);
+				addOffset('singUP', -8, 177);
+				addOffset('singDOWN', 5, 73);
+				addOffset('singLEFT', 0, 135);
+				addOffset('singRIGHT', 0, 140);
+				addOffset('hey', 0, 153);
+				addOffset('intro', 0, 153);
+				
 				playAnim('idle');
 		}
 

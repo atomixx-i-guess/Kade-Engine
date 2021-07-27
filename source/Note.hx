@@ -26,7 +26,8 @@ class Note extends FlxSprite
 	public var modifiedByLua:Bool = false;
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
-
+	public var goop:Bool = false;
+	
 	public var noteScore:Float = 1;
 
 	public static var swagWidth:Float = 160 * 0.7;
@@ -50,6 +51,16 @@ class Note extends FlxSprite
 		x += 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
 		y -= 2000;
+		strumTime = strumTime + FlxG.save.data.offset;
+		strumTime = strumTime < 0 ? 0 : strumTime;
+
+		goop = noteData > 7;
+		//if(!isSustainNote) { goop = Std.random(3) == 1; } //Set random notes to burning
+
+		//No held goopy cum-like notes :] (Part 1)
+		if(isSustainNote && prevNote.goop) { 
+			goop = true;
+		}
 		if (inCharter)
 			this.strumTime = strumTime;
 		else 
@@ -103,20 +114,50 @@ class Note extends FlxSprite
 				animation.addByPrefix('redScroll', 'red instance 1');
 				animation.addByPrefix('blueScroll', 'blue instance 1');
 				animation.addByPrefix('purpleScroll', 'purple instance 1');
+				if (isSustainNote)
+				{
+					frames = Paths.getSparrowAtlas('NOTE_assets');
+					animation.addByPrefix('purpleholdend', 'pruple end hold instance 1');
+					animation.addByPrefix('greenholdend', 'green hold end instance 1');
+					animation.addByPrefix('redholdend', 'red hold end instance 1');
+					animation.addByPrefix('blueholdend', 'blue hold end instance 1');
 
-				animation.addByPrefix('purpleholdend', 'pruple end hold instance 1');
-				animation.addByPrefix('greenholdend', 'green hold end instance 1');
-				animation.addByPrefix('redholdend', 'red hold end instance 1');
-				animation.addByPrefix('blueholdend', 'blue hold end instance 1');
+					animation.addByPrefix('purplehold', 'purple hold piece instance 1');
+					animation.addByPrefix('greenhold', 'green hold piece instance 1');
+					animation.addByPrefix('redhold', 'red hold piece instance 1');
+					animation.addByPrefix('bluehold', 'blue hold piece instance 1');
+				}
+				if (goop)
+				{
+					if (daStage == 'train')
+					{
+						frames = Paths.getSparrowAtlas('bgLark/NOTE_goop');
+						if (!FlxG.save.data.downscroll)
+						{
+							animation.addByPrefix('blueScroll', 'blue');
+							animation.addByPrefix('greenScroll', 'green');
+						}
+						else
+						{
+							animation.addByPrefix('greenScroll', 'blue');
+							animation.addByPrefix('blueScroll', 'green ');
+						}
+						animation.addByPrefix('redScroll', 'red');
+						animation.addByPrefix('purpleScroll', 'purple');
+						animation.addByPrefix('blueScroll', 'blue');
+						animation.addByPrefix('greenScroll', 'green');
 
-				animation.addByPrefix('purplehold', 'purple hold piece instance 1');
-				animation.addByPrefix('greenhold', 'green hold piece instance 1');
-				animation.addByPrefix('redhold', 'red hold piece instance 1');
-				animation.addByPrefix('bluehold', 'blue hold piece instance 1');
-
+						if (FlxG.save.data.downscroll)
+						{
+							flipY = true;
+							x -= 50;
+						}
+					}
+				}
 				setGraphicSize(Std.int(width * 0.7));
 				updateHitbox();
 				antialiasing = true;
+					
 		}
 
 		switch (noteData)
@@ -197,11 +238,15 @@ class Note extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		
+		if(isSustainNote && prevNote.goop) { 
+			this.kill(); 
+		}
 
 		if (mustPress)
 		{
 			// ass
-			if (isSustainNote)
+			if (!goop)
 			{
 				if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
 					&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.5))
@@ -211,11 +256,22 @@ class Note extends FlxSprite
 			}
 			else
 			{
+				if (PlayState.curStage == 'train') // these though, REALLY hard to hit.
+				{
+					if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 0.3)
+						&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * 0.2)) // also they're almost impossible to hit late!
+						canBeHit = true;
+					else
+						canBeHit = false;
+				}
+				else
+				{
 				if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset
 					&& strumTime < Conductor.songPosition + Conductor.safeZoneOffset)
 					canBeHit = true;
 				else
 					canBeHit = false;
+				}
 			}
 
 			if (strumTime < Conductor.songPosition - Conductor.safeZoneOffset * Conductor.timeScale && !wasGoodHit)
